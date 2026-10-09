@@ -4,6 +4,7 @@ import ChatHeader from "./components/ChatHeader.jsx";
 import MessageList from "./components/MessageList.jsx";
 import Composer from "./components/Composer.jsx";
 import { useState } from "react";
+import PinnedBar from "./components/PinnedBar.jsx";
 
 function now(){
   return new Date().toLocaleTimeString([], {hour: "numeric", minute: "2-digit"});
@@ -13,6 +14,8 @@ export default function App() {
   const [activeId, setActiveId] = useState("general");
   const [messages, setMessages] = useState(SEED_MESSAGES);
   const [isTyping, setIsTyping] = useState(false);
+  const [pinnedId, setPinnedId] = useState(null);
+  const pinned = messages[activeId].find((m) => m.id === pinnedId);
   const channel = CHANNELS.find((c) => c.id === activeId);
 
   function handelSend(text){
@@ -27,6 +30,10 @@ export default function App() {
     setMessages({...messages, [activeId]: updated});
   }
 
+  function handelPin(id){
+    setPinnedId(pinnedId === id ? null : id);
+  }
+
   return (
     <div className="app">
       <Sidebar 
@@ -36,7 +43,13 @@ export default function App() {
       />
       <main className="main">
         <ChatHeader channel={channel} isTyping={isTyping} />
-        <MessageList messages={messages[activeId]} onReact={handelReact}/>
+        <PinnedBar message={pinned} onUnpin={() => setPinnedId(null)} />
+        <MessageList 
+          messages={messages[activeId]} 
+          pinnedId={pinnedId}
+          onPin={handelPin}
+          onReact={handelReact}
+        />
         <Composer onSend={handelSend} onTypingChange={setIsTyping}/>
       </main>
     </div>
