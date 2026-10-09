@@ -12,6 +12,7 @@ function now(){
 export default function App() {
   const [activeId, setActiveId] = useState("general");
   const [messages, setMessages] = useState(SEED_MESSAGES);
+  const [isTyping, setIsTyping] = useState(false);
   const channel = CHANNELS.find((c) => c.id === activeId);
 
   function handelSend(text){
@@ -27,9 +28,9 @@ export default function App() {
         onSelectChannel={setActiveId}
       />
       <main className="main">
-        <ChatHeader channel={channel} />
+        <ChatHeader channel={channel} isTyping={isTyping} />
         <MessageList messages={messages[activeId]}/>
-        <Composer onSend={handelSend}/>
+        <Composer onSend={handelSend} onTypingChange={setIsTyping}/>
       </main>
     </div>
   );
